@@ -6,33 +6,33 @@ import (
 	"strconv"
 )
 
-var symbolsWeight = map[rune]int{
-	'+': 0,
-	'-': 0,
-	'*': 1,
-	'/': 1,
-	'^': 2,
-	'(': 3,
-	')': 3,
+var symbolsWeight = map[string]int{
+	"+": 0,
+	"-": 0,
+	"*": 1,
+	"/": 1,
+	"^": 2,
+	"(": 3,
+	")": 3,
 }
 
 type operation func(float64, float64) float64
 
-var symbolsOperation = map[rune]operation{
-	'+': func(a, b float64) float64 { return a + b },
-	'-': func(a, b float64) float64 { return b - a },
-	'*': func(a, b float64) float64 { return a * b },
-	'/': func(a, b float64) float64 { return b / a },
-	'^': func(a, b float64) float64 { return math.Pow(b, a) },
+var symbolsOperation = map[string]operation{
+	"+": func(a, b float64) float64 { return a + b },
+	"-": func(a, b float64) float64 { return b - a },
+	"*": func(a, b float64) float64 { return a * b },
+	"/": func(a, b float64) float64 { return b / a },
+	"^": func(a, b float64) float64 { return math.Pow(b, a) },
 }
 
 // Infix to postfix
-func InfixToPostfix(input string) []rune {
+func InfixToPostfix(input []string) []string {
 	//Store the postfix expression
-	output := []rune{}
+	output := []string{}
 
 	//Store the operators and parenthesis
-	stack := stack.NewStack[rune](len(input))
+	stack := stack.NewStack[string](len(input))
 
 	for _, char := range input {
 
@@ -43,19 +43,19 @@ func InfixToPostfix(input string) []rune {
 		}
 
 		//If the character is ')', we extract all the elements up to the first parenthesis
-		if char == ')' {
+		if char == ")" {
 			bracketsExtract(stack, &output)
 			continue
 		}
 
 		e := stack.Top()
 		// Add the symbol if it has a greater weight than the top symbol of the stack or if the stack is empty
-		if stack.Empty() || (symbolsWeight[char] == symbolsWeight[e] && e == '^') || symbolsWeight[char] > symbolsWeight[e] {
+		if stack.Empty() || (symbolsWeight[char] == symbolsWeight[e] && e == "^") || symbolsWeight[char] > symbolsWeight[e] {
 			stack.Push(char)
 		} else {
 			/* Add the symbol to the output (postfix expression) while making sure that the top symbol is greater than or equal to the input character and different from '(' because it can't be  add the '(' symbol to the postfix expression */
 
-			for !stack.Empty() && e != '(' && symbolsWeight[char] <= symbolsWeight[e] {
+			for !stack.Empty() && e != "(" && symbolsWeight[char] <= symbolsWeight[e] {
 				stack.Pop()
 				output = append(output, e)
 				e = stack.Top()
@@ -74,16 +74,16 @@ func InfixToPostfix(input string) []rune {
 }
 
 // Extract all the symbols that are between the brackets
-func bracketsExtract(stack *stack.Stack[rune], output *[]rune) {
+func bracketsExtract(stack *stack.Stack[string], output *[]string) {
 	stackElement := stack.Pop()
-	for stackElement != '(' {
+	for stackElement != "(" {
 		*output = append(*output, stackElement)
 		stackElement = stack.Pop()
 	}
 }
 
 // Compute the postifix expression
-func ComputePostFixExpression(postFix []rune) float64 {
+func ComputePostFixExpression(postFix []string) float64 {
 	result := stack.NewStack[float64](len(postFix))
 
 	for _, char := range postFix {

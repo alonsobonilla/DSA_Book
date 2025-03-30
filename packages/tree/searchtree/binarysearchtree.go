@@ -42,3 +42,23 @@ func (t BinarySearchTree) find(element Comparable, node *binaryNode) *binaryNode
 
 	return node
 }
+
+func (t BinarySearchTree) findMin(node *binaryNode) *binaryNode {
+	if node == nil {
+		return nil
+	} else if node.Left == nil {
+		return node
+	}
+	return t.findMin(node.Left)
+}
+
+func (t BinarySearchTree) findMax(node *binaryNode) *binaryNode {
+
+	if node != nil {
+		for node.Right != nil {
+			node = node.Right
+		}
+	}
+
+	return node
+}
